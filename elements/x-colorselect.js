@@ -3,7 +3,7 @@
 //   © 2016-2017 Jarosław Foksa
 
 {
-  let {createElement} = Xel.utils.element;
+  let {createElement, closest} = Xel.utils.element;
   let {formatColorString, parseColor, serializeColor} = Xel.utils.color;
   let {debounce} = Xel.utils.time;
 
@@ -99,6 +99,12 @@
     _onValueAttributeChange() {
       if (!this._inputChangeStarted) {
         this._updateInput();
+      }
+
+      let picker = this.querySelector("x-wheelcolorpicker, x-rectcolorpicker");
+
+      if (picker && picker.getAttribute("value") !== this.getAttribute("value")) {
+        picker.setAttribute("value", this.getAttribute("value"));
       }
     }
 
@@ -223,8 +229,11 @@
           this.focus();
         }
         else {
-          this.focus();
-          this.blur();
+          let ancestorFocusableElement = closest(this.parentNode, "[tabindex]");
+
+          if (ancestorFocusableElement) {
+            ancestorFocusableElement.focus();
+          }
         }
 
         popover.removeAttribute("closing");
